@@ -1,0 +1,7 @@
+state/
+inbox/*.md
+!inbox/README.md
+__pycache__/
+*.pyc
+.env
+.pytest_cache/

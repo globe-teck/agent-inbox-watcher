@@ -1,0 +1,6 @@
+URGENCY: risk
+
+# Nightly build failed twice
+
+The deploy job failed at 10:20 and again at 10:30 with the same error. The last
+good release is still live. Proposed fix: roll back the dependency bump.
