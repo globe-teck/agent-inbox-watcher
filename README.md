@@ -136,6 +136,10 @@ python3 -m unittest discover -s tests -v
 
 The tests run a local HTTP server and use temporary folders; they need no network.
 
+## Authorship
+
+Built with AI coding assistance. I defined the requirements, ran the tests, and reviewed the changes.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
