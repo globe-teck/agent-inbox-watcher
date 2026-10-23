@@ -4,6 +4,8 @@
 # script): the watcher's own pid lock keeps a single instance.
 # Extra arguments (e.g. --allow-insecure-http) are passed to the watcher.
 # Uses the current environment (WAKE_URL, WAKE_AUTH, AIW_*). Never echoes them.
+# With AIW_REQUIRE_LIVE=1 it refuses to start without credentials and exits 4,
+# and the final --status call exits 4 if a running watcher is in DRY-RUN.
 set -u
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PY="$HERE/inbox_watcher.py"
@@ -13,6 +15,11 @@ if python3 "$PY" --status >/dev/null 2>&1; then
   echo "inbox_watcher already running."
 else
   if [ -z "${WAKE_URL:-}" ] || [ -z "${WAKE_AUTH:-}" ]; then
+    case "${AIW_REQUIRE_LIVE:-}" in
+      1|true|yes|on)
+        echo "ERROR: AIW_REQUIRE_LIVE is set but WAKE_URL and/or WAKE_AUTH are missing; not starting." >&2
+        exit 4 ;;
+    esac
     echo "WARNING: WAKE_URL and/or WAKE_AUTH not set; the watcher will run in DRY-RUN mode."
   fi
   AIW_STATE_DIR="$STATE" nohup python3 "$PY" "$@" >>"$STATE/watcher.nohup.out" 2>&1 </dev/null &
