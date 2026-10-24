@@ -92,5 +92,17 @@ class RequireLiveTest(unittest.TestCase):
         self.assertNotEqual(self.run_py("--status").returncode, 0)
 
 
+    def test_ensure_script_honours_require_live_flag(self):
+        r = subprocess.run(["bash", ENSURE, "--require-live"], env=self.env, capture_output=True,
+                           text=True, timeout=30, cwd=self.tmp.name)
+        self.assertEqual(r.returncode, 4)
+        self.assertIn("not starting", r.stderr)
+
+    def test_ensure_script_env_value_is_case_insensitive(self):
+        env = dict(self.env, AIW_REQUIRE_LIVE=" TRUE ")
+        r = subprocess.run(["bash", ENSURE], env=env, capture_output=True, text=True, timeout=30, cwd=self.tmp.name)
+        self.assertEqual(r.returncode, 4)
+
+
 if __name__ == "__main__":
     unittest.main()

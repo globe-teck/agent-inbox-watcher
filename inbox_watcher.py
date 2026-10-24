@@ -464,6 +464,8 @@ def status():
     print(f"pid: {pid if running else '-'}")
     if running and run_mode:
         print(f"mode: {run_mode} (running watcher)")
+    elif running:
+        print("mode: unknown (running watcher has no watcher.mode; restart it to record its mode)")
     else:
         print(f"mode: {'LIVE' if creds() else 'DRY-RUN (WAKE_URL/WAKE_AUTH not set in this shell)'}")
     print(f"inbox: {INBOX}")
@@ -473,6 +475,9 @@ def status():
     print("last fyi POST: " + (dt.datetime.fromtimestamp(float(lf), TZ).strftime("%Y-%m-%d %H:%M %Z") if lf else "never"))
     if not running:
         return 3
+    if REQUIRE_LIVE and run_mode is None:
+        print("ALERT: AIW_REQUIRE_LIVE is set but the running watcher's mode is unknown; restart it")
+        return EXIT_NOT_LIVE
     if REQUIRE_LIVE and run_mode != "LIVE":
         print("ALERT: watcher is running in DRY-RUN but AIW_REQUIRE_LIVE is set; nothing is being delivered")
         return EXIT_NOT_LIVE
